@@ -12,6 +12,5 @@ MSYS_NO_PATHCONV=1 docker run --rm \
   -v "$KEYS:/keys" \
   -v legwork-cargo-registry:/root/.cargo/registry \
   -v legwork-cargo-git:/root/.cargo/git \
-  -v legwork-solana-cache:/root/.cache/solana \
   -w /work \
   solanafoundation/anchor:v1.0.2 bash -lc "$*"

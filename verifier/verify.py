@@ -127,9 +127,9 @@ Answer ONLY with JSON matching this schema:
 def _client():
     from google import genai
     if settings.gemini_api_key:
-        return genai.Client(api_key=settings.gemini_api_key)
+        return genai.Client(api_key=settings.gemini_api_key, http_options={"timeout": 45_000})
     if settings.vertex_project:
-        return genai.Client(vertexai=True, project=settings.vertex_project, location=settings.vertex_location)
+        return genai.Client(vertexai=True, project=settings.vertex_project, location=settings.vertex_location, http_options={"timeout": 45_000})
     raise RuntimeError("No GEMINI_API_KEY or VERTEX_PROJECT configured")
 
 
