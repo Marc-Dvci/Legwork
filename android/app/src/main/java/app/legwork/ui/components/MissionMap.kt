@@ -125,6 +125,21 @@ private class MapHolder {
             )
         )
         style.addLayer(
+            CircleLayer("me-halo", SRC_ME).withProperties(
+                PropertyFactory.circleRadius(18f),
+                PropertyFactory.circleColor("#2563EB"),
+                PropertyFactory.circleOpacity(0.18f),
+            )
+        )
+        style.addLayer(
+            CircleLayer("me-dot", SRC_ME).withProperties(
+                PropertyFactory.circleRadius(7f),
+                PropertyFactory.circleColor("#2563EB"),
+                PropertyFactory.circleStrokeColor("#FFFFFF"),
+                PropertyFactory.circleStrokeWidth(2.5f),
+            )
+        )
+        style.addLayer(
             CircleLayer("mission-halo", SRC_MISSIONS).withProperties(
                 PropertyFactory.circleRadius(22f),
                 PropertyFactory.circleColor("#0E9F6E"),
@@ -152,21 +167,6 @@ private class MapHolder {
                 PropertyFactory.textColor("#FFFFFF"),
                 PropertyFactory.textAllowOverlap(true),
                 PropertyFactory.textIgnorePlacement(true),
-            )
-        )
-        style.addLayer(
-            CircleLayer("me-halo", SRC_ME).withProperties(
-                PropertyFactory.circleRadius(18f),
-                PropertyFactory.circleColor("#2563EB"),
-                PropertyFactory.circleOpacity(0.18f),
-            )
-        )
-        style.addLayer(
-            CircleLayer("me-dot", SRC_ME).withProperties(
-                PropertyFactory.circleRadius(7f),
-                PropertyFactory.circleColor("#2563EB"),
-                PropertyFactory.circleStrokeColor("#FFFFFF"),
-                PropertyFactory.circleStrokeWidth(2.5f),
             )
         )
     }

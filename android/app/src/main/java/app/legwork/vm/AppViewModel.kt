@@ -82,6 +82,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     private var api = LegworkApi(Config.VERIFIER_URL) { _state.value.session.jwt }
     private val rpc = SolanaRpc(AppConfig().rpcUrl)
     private var locationJob: Job? = null
+    private var lastRefreshFix: Fix? = null
 
     init {
         viewModelScope.launch {
@@ -126,6 +127,9 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             tracker.lastKnown()?.let { f -> _state.update { it.copy(fix = f) } }
             tracker.updates().collect { f ->
                 _state.update { it.copy(fix = f) }
+                // Re-query the board when the phone has moved far from where the list was fetched.
+                val last = lastRefreshFix
+                if (last != null && Geo.distanceM(last.lat, last.lon, f.lat, f.lon) > 500) refreshMissions(f)
             }
         }
         viewModelScope.launch {
@@ -145,6 +149,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     // ----- Missions --------------------------------------------------------------------------
 
     fun refreshMissions(fix: Fix? = _state.value.fix) = viewModelScope.launch {
+        lastRefreshFix = fix
         _state.update { it.copy(missionsLoading = true, missionsError = null) }
         runCatching { api.missions(fix?.lat, fix?.lon, 50.0, _state.value.session.wallet) }
             .onSuccess { list ->

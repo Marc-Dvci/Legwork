@@ -122,7 +122,9 @@ private fun BottomBar(selected: Int, onSelect: (Int) -> Unit) {
 private fun MissionsTab(vm: AppViewModel, nav: NavHostController) {
     val state by vm.state.collectAsStateWithLifecycle()
     var showMap by rememberSaveable { mutableStateOf(true) }
-    val open = remember(state.missions) { state.missions.filter { it.isOpen || it.completedByMe } }
+    val open = remember(state.missions, state.fix) {
+        state.missions.filter { it.isOpen || it.completedByMe }.sortedBy { vm.distanceTo(it) ?: Double.MAX_VALUE }
+    }
     val active = state.activeMission
 
     Column(Modifier.fillMaxSize()) {
