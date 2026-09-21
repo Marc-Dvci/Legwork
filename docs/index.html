@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Legwork · Get paid for the legwork</title>
+<meta name="description" content="Paid, verified real-world missions for Solana Seeker owners. Funded in USDC, settled on Solana, proven with the phone in your pocket.">
+<meta property="og:title" content="Legwork · Get paid for the legwork">
+<meta property="og:description" content="Paid, verified real-world missions on Solana Mobile.">
+<meta property="og:image" content="https://marc-dvci.github.io/Legwork/screenshots/01_map.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAF7F2; --surface: #FFFFFF; --alt: #F3EEE6; --ink: #17130F; --muted: #6E665D; --line: #E8E1D8;
+    --accent: #FF5A1F; --accent-soft: #FFE9DF; --money: #0E9F6E; --money-soft: #DDF5EA;
+    --seeker: #7C3AED; --seeker-soft: #EDE4FF; --sky: #2563EB;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font-family: Inter, system-ui, sans-serif; }
+  html { scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+  h1, h2, h3 { font-family: Fraunces, Georgia, serif; letter-spacing: -0.02em; margin: 0; }
+  a { color: inherit; }
+  section.slide { min-height: 100vh; scroll-snap-align: start; padding: 64px 7vw; display: flex; flex-direction: column; justify-content: center; position: relative; }
+  section.dark { background: var(--ink); color: #fff; }
+  section.dark .muted { color: #CFC7BC; }
+  .muted { color: var(--muted); }
+  .kicker { font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+  .dark .kicker { color: var(--accent); }
+  h2 { font-size: clamp(30px, 4.2vw, 54px); font-weight: 800; line-height: 1.05; max-width: 20ch; }
+  .lead { font-size: clamp(16px, 1.4vw, 20px); line-height: 1.5; max-width: 60ch; margin-top: 18px; }
+  .grid { display: grid; gap: 20px; margin-top: 40px; }
+  .g2 { grid-template-columns: repeat(2, 1fr); } .g3 { grid-template-columns: repeat(3, 1fr); } .g4 { grid-template-columns: repeat(4, 1fr); }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 24px; }
+  .card h3 { font-family: Inter, sans-serif; font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .card p { margin: 0; color: var(--muted); line-height: 1.5; font-size: 15px; }
+  .card.soft { background: var(--alt); } .card.seeker { background: var(--seeker-soft); border-color: transparent; } .card.seeker h3 { color: var(--seeker); }
+  .card.money { background: var(--money-soft); border-color: transparent; } .card.money h3 { color: var(--money); }
+  .emoji { font-size: 28px; margin-bottom: 12px; display: block; }
+  .split { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 48px; align-items: center; }
+  .phones { display: flex; gap: 22px; justify-content: center; align-items: flex-end; margin-top: 36px; }
+  .phone { border-radius: 30px; background: #17130F; padding: 7px; box-shadow: 0 30px 60px rgba(23,19,15,.18); }
+  .phone img { display: block; width: 100%; border-radius: 24px; }
+  .phone.sm { width: 200px; } .phone.md { width: 260px; } .phone.lg { width: 320px; }
+  .cap { text-align: center; color: var(--muted); font-size: 13px; margin-top: 12px; }
+  .pill { display: inline-block; padding: 6px 12px; border-radius: 999px; font-size: 13px; font-weight: 600; }
+  .pill.accent { background: var(--accent-soft); color: var(--accent); } .pill.seeker { background: var(--seeker-soft); color: var(--seeker); } .pill.grey { background: var(--alt); color: var(--muted); }
+  .steps { counter-reset: s; }
+  .step { position: relative; padding-left: 64px; }
+  .step::before { counter-increment: s; content: counter(s); position: absolute; left: 20px; top: 22px; width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; display: grid; place-items: center; font-size: 15px; }
+  .step:last-child::before { background: var(--money); }
+  .stats { display: flex; gap: 48px; margin-top: 36px; flex-wrap: wrap; }
+  .stat b { font-family: Fraunces, serif; font-size: clamp(40px, 5vw, 72px); font-weight: 800; line-height: 1; display: block; }
+  .stat span { color: var(--muted); font-size: 14px; }
+  .dark .stat span { color: #CFC7BC; }
+  .checks { list-style: none; padding: 0; margin: 28px 0 0; display: grid; gap: 10px; }
+  .checks li { display: grid; grid-template-columns: 28px 1fr 1.2fr; gap: 14px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .checks li i { width: 26px; height: 26px; border-radius: 50%; background: var(--money); color: #fff; display: grid; place-items: center; font-style: normal; font-size: 14px; }
+  .checks li b { font-size: 15px; } .checks li span { color: var(--muted); font-size: 14px; }
+  table.tiers { width: 100%; border-collapse: collapse; margin-top: 24px; }
+  table.tiers td { padding: 14px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; font-size: 15px; }
+  table.tiers td:last-child { color: var(--muted); }
+  .nav { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 5; }
+  .nav a { width: 8px; height: 8px; border-radius: 50%; background: var(--line); display: block; }
+  .nav a.on { background: var(--accent); width: 8px; height: 22px; border-radius: 6px; }
+  .bar { position: fixed; left: 0; right: 0; top: 0; padding: 14px 7vw; display: flex; justify-content: space-between; align-items: center; z-index: 5; font-size: 14px; pointer-events: none; }
+  .bar b { font-family: Fraunces, serif; font-weight: 800; color: var(--accent); font-size: 20px; }
+  .bar .links a { pointer-events: auto; margin-left: 18px; color: var(--muted); text-decoration: none; font-weight: 500; }
+  .dark .bar .links a { color: #CFC7BC; }
+  .foot { position: absolute; bottom: 22px; left: 7vw; right: 7vw; display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+  .dark .foot { color: #8F877D; }
+  .btn { display: inline-block; padding: 14px 22px; border-radius: 16px; background: var(--accent); color: #fff; font-weight: 600; text-decoration: none; margin-right: 12px; margin-top: 28px; }
+  .btn.ghost { background: transparent; border: 1px solid #5a534b; color: #fff; }
+  code { font-family: ui-monospace, Menlo, monospace; font-size: 0.9em; background: var(--alt); padding: 2px 6px; border-radius: 6px; }
+  .dark code { background: #2a2520; }
+  @media (max-width: 900px) {
+    .g2, .g3, .g4 { grid-template-columns: 1fr; }
+    .split { grid-template-columns: 1fr; }
+    .phones { flex-wrap: wrap; } .phone.sm, .phone.md, .phone.lg { width: 44%; }
+    .checks li { grid-template-columns: 28px 1fr; } .checks li span { grid-column: 2; }
+    h2 { max-width: none; }
+    section.slide { padding: 80px 6vw 60px; min-height: auto; }
+    .nav { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="bar"><b>Legwork</b><span class="links"><a href="https://github.com/Marc-Dvci/Legwork">GitHub</a><a href="deck/Legwork-pitch.pdf">PDF</a><a href="deck/Legwork-pitch.pptx">PPTX</a></span></div>
+<nav class="nav" id="nav"></nav>
+
+<section class="slide dark" id="s1">
+  <div class="split">
+    <div>
+      <div class="kicker">CLOCK IN · Solana Mobile hackathon · 2026</div>
+      <h1 style="font-size: clamp(56px, 9vw, 128px); font-weight: 800; color: var(--accent); line-height: .95;">Legwork</h1>
+      <h2 style="margin-top: 18px; color: #fff; max-width: none;">Get paid for the legwork.</h2>
+      <p class="lead muted">Paid, verified real-world missions for Seeker owners. Funded in USDC, settled on Solana, proven with the phone in your pocket.</p>
+      <a class="btn" href="https://github.com/Marc-Dvci/Legwork">Source code</a><a class="btn ghost" href="https://github.com/Marc-Dvci/Legwork/releases">Android APK</a>
+    </div>
+    <div class="phones"><div class="phone lg"><img src="screenshots/01_map.png" alt="Legwork map with reward pins"></div></div>
+  </div>
+  <div class="foot"><span>Marc Donovici</span><span>↓ scroll or use the arrow keys</span></div>
+</section>
+
+<section class="slide" id="s2">
+  <div class="kicker">The problem</div>
+  <h2>Real-world facts go stale when nobody is looking</h2>
+  <p class="lead muted">Does that café still accept USDC? Is the charger working? Is our poster still up? Someone has to go and look.</p>
+  <div class="grid g2">
+    <div class="card"><span class="emoji">🏪</span><h3>Merchants and directories</h3><p>Payment methods, opening hours and stock change weekly. A wrong listing costs a customer every time.</p></div>
+    <div class="card"><span class="emoji">🔌</span><h3>Infrastructure operators</h3><p>Chargers, kiosks and signage fail in the field long before a ticket is raised.</p></div>
+    <div class="card"><span class="emoji">🎪</span><h3>Events and communities</h3><p>Posters, booths and pop-ups exist for days. Verification by staff costs more than the campaign.</p></div>
+    <div class="card"><span class="emoji">◎</span><h3>The Solana ecosystem</h3><p>"Where can I actually pay with USDC?" is still answered by hearsay.</p></div>
+  </div>
+  <p class="muted" style="margin-top: 28px; font-style: italic;">Today the options are an employee's afternoon, a contractor, a phone call nobody answers, or a gig platform with a 30% take and no proof.</p>
+</section>
+
+<section class="slide" id="s3">
+  <div class="kicker">The product</div>
+  <h2>Seeker owners become a paid verification network</h2>
+  <p class="lead muted">A creator funds a mission in USDC. A nearby worker walks there, proves it with GPS and the camera, and is paid from escrow in seconds.</p>
+  <div class="phones">
+    <div><div class="phone sm"><img src="screenshots/01_map.png" alt=""></div><div class="cap">Missions near you, priced</div></div>
+    <div><div class="phone sm"><img src="screenshots/02_detail.png" alt=""></div><div class="cap">What to do, what proves it</div></div>
+    <div><div class="phone sm"><img src="screenshots/03_arrived.png" alt=""></div><div class="cap">GPS confirms arrival</div></div>
+    <div><div class="phone sm"><img src="screenshots/05_paid.png" alt=""></div><div class="cap">Verified and paid</div></div>
+  </div>
+</section>
+
+<section class="slide" id="s4">
+  <div class="kicker">The loop</div>
+  <h2>One loop, six steps, every one of them on the phone</h2>
+  <div class="grid g3 steps">
+    <div class="card step"><h3>Discover</h3><p>Reward pins on a live map. Alerts when a mission lands within your radius.</p></div>
+    <div class="card step"><h3>Reserve</h3><p>A slot is held for 45 minutes on chain. Gasless for the worker.</p></div>
+    <div class="card step"><h3>Walk</h3><p>Live distance, navigate intent, and a green state the moment you are inside the radius.</p></div>
+    <div class="card step"><h3>Prove</h3><p>In-app camera only. The photo carries GPS, accuracy, timestamp and device signals.</p></div>
+    <div class="card step"><h3>Verify</h3><p>Location policy, freshness, duplicate detection, then a vision judge with named checks.</p></div>
+    <div class="card step"><h3>Get paid</h3><p><code>approve_completion</code> moves USDC from the vault to your wallet and writes the proof hash.</p></div>
+  </div>
+  <p class="muted" style="margin-top: 24px; font-style: italic;">Score, streak and earnings update from chain, and the map already shows the next one.</p>
+</section>
+
+<section class="slide" id="s5">
+  <div class="split">
+    <div>
+      <div class="kicker">Why mobile</div>
+      <h2>Remove the phone and the product stops working</h2>
+      <div class="grid" style="gap: 14px; margin-top: 28px;">
+        <div class="card"><h3>📍 GPS is the first proof</h3><p>Presence inside the mission radius, accuracy-aware, mock providers rejected.</p></div>
+        <div class="card"><h3>📸 The camera is the second</h3><p>Live capture only. No gallery uploads. Perceptual hashes catch re-used photos.</p></div>
+        <div class="card"><h3>📱 The Seeker is the third</h3><p>The Seeker Genesis Token binds one device to one worker for Seeker-only missions.</p></div>
+        <div class="card"><h3>🔔 Notifications bring people back</h3><p>"$8 mission 400 m away", computed on the device every 15 minutes from the last position.</p></div>
+      </div>
+    </div>
+    <div class="phones"><div><div class="phone md"><img src="screenshots/04_capture.png" alt=""></div><div class="cap">Checklist on the capture screen</div></div></div>
+  </div>
+</section>
+
+<section class="slide" id="s6">
+  <div class="kicker">Why Solana</div>
+  <h2>The chain is the database</h2>
+  <p class="lead muted">Missions, escrow, reservations, completions, reputation, streaks and stake are accounts of one Anchor program. The verifier holds no state.</p>
+  <div class="grid g2">
+    <div class="card"><h3>Mission + vault</h3><p>A PDA per mission with its own USDC token account. The creator funds reward × slots in one signature.</p></div>
+    <div class="card soft"><h3>Escrow you can inspect</h3><p>"$12.00 still locked" on the mission page is the vault balance.</p></div>
+    <div class="card"><h3>Reservation</h3><p>Held for a worker by the verifier's signature. The worker never pays a fee.</p></div>
+    <div class="card soft"><h3>Instant global settlement</h3><p>A worker in Strasbourg is paid by a creator anywhere, in seconds, with a transaction link.</p></div>
+    <div class="card"><h3>Completion</h3><p>Proof hash, confidence and the yes/no answer, written in the same transaction as the payout.</p></div>
+    <div class="card soft"><h3>Verifier is a key, not a database</h3><p>It can only pay a reserved worker from that mission's vault, once.</p></div>
+  </div>
+  <p class="muted" style="margin-top: 22px;">Program <code>86V9Vw6jPnoy4R6feJK6atwMK3x1oUootvvbqb8iZHD6</code> · Anchor 1.0 · IDL committed in the repository</p>
+</section>
+
+<section class="slide" id="s7">
+  <div class="split">
+    <div>
+      <div class="kicker">Why Seeker</div>
+      <h2>Seeker hardware gets real marketplace utility</h2>
+      <div class="grid g2" style="margin-top: 28px;">
+        <div class="card seeker"><h3>Seeker verified badge</h3><p>The app inspects the wallet's Token-2022 accounts for a Seeker Genesis Token (mint authority, metadata pointer, token group), then the verifier binds it on chain.</p></div>
+        <div class="card seeker"><h3>One device, one worker</h3><p>A Device PDA maps each Genesis Token mint to a single wallet. Sponsored campaigns pay once per Seeker, not once per keypair.</p></div>
+        <div class="card seeker"><h3>Seeker-only missions</h3><p>Creators tick "Seeker only"; the program refuses approvals from unbound wallets.</p></div>
+        <div class="card seeker"><h3>Verified tier from day one</h3><p>A bound Seeker skips the Explorer tier: priority verification and a badge on the leaderboard.</p></div>
+      </div>
+    </div>
+    <div class="phones"><div><div class="phone md"><img src="screenshots/07_profile.png" alt=""></div><div class="cap">Profile: tier, stake, Seeker check</div></div></div>
+  </div>
+</section>
+
+<section class="slide" id="s8">
+  <div class="kicker">SKR</div>
+  <h2>SKR is the commitment behind trust</h2>
+  <p class="lead muted">Remove SKR and the marketplace loses its trust tiers and its fee schedule. Staking is enforced by the program, not by a spreadsheet.</p>
+  <div class="split" style="align-items: start;">
+    <table class="tiers">
+      <tr><td><span class="pill grey">Explorer</span></td><td><b>Standard missions</b></td><td>everyone starts here</td></tr>
+      <tr><td><span class="pill seeker">Verified</span></td><td><b>Badge, priority verification</b></td><td>3 missions, or a Seeker</td></tr>
+      <tr><td><span class="pill seeker">Trusted</span></td><td><b>Higher-value missions, two reservations</b></td><td>10 missions + 100 SKR</td></tr>
+      <tr><td><span class="pill seeker">Expert</span></td><td><b>Premium campaigns, dispute reviewer</b></td><td>40 missions + 1000 SKR</td></tr>
+    </table>
+    <div class="grid" style="margin-top: 24px;">
+      <div class="card seeker"><h3>Creators stake 500 SKR</h3><p>Platform fee drops from 10% to 5% on every mission they fund. Computed on chain at funding time.</p></div>
+      <div class="card seeker"><h3>Workers stake to climb</h3><p>Stake is locked in a config-owned vault and can be withdrawn at any time. Creators can require a minimum score.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s9">
+  <div class="split">
+    <div>
+      <div class="kicker">For creators</div>
+      <h2>Deploy people into the real world in one signature</h2>
+      <div class="grid" style="gap: 12px; margin-top: 28px;">
+        <div class="card"><h3>Templates</h3><p>USDC acceptance, charger check, poster check, shelf availability, opening hours.</p></div>
+        <div class="card"><h3>Pin on the map, set the radius</h3><p>Reward, number of completions, deadline, Seeker-only, minimum score.</p></div>
+        <div class="card"><h3>Fund and publish</h3><p>One wallet signature creates the mission, its vault, the escrow and the fee.</p></div>
+        <div class="card"><h3>Answers, not just photos</h3><p>A yes/no question is answered on chain per completion; the dashboard tallies Yes / No / Unclear.</p></div>
+      </div>
+    </div>
+    <div class="phones"><div><div class="phone md"><img src="screenshots/08_create.png" alt=""></div><div class="cap">New mission with funding summary</div></div></div>
+  </div>
+</section>
+
+<section class="slide" id="s10">
+  <div class="kicker">Trust and privacy</div>
+  <h2>Every proof passes named checks the worker can see</h2>
+  <div class="split" style="align-items: start;">
+    <ul class="checks">
+      <li><i>✓</i><b>At the mission location</b><span>distance ≤ radius + min(accuracy, 50 m) + 25 m</span></li>
+      <li><i>✓</i><b>GPS accuracy</b><span>≤ 100 m, mock-location flag rejected</span></li>
+      <li><i>✓</i><b>Fresh capture</b><span>timestamp within 10 min of server time</span></li>
+      <li><i>✓</i><b>Original photo</b><span>SHA-256 not on chain, dhash Hamming > 6 from recent</span></li>
+      <li><i>✓</i><b>Live photo, not a screen</b><span>vision judge flags re-photographed screens and prints</span></li>
+      <li><i>✓</i><b>Photo matches the mission</b><span>relevant, fulfils the instructions, confidence ≥ 60</span></li>
+      <li><i>✓</i><b>2 to 4 mission-specific checks</b><span>e.g. "accepted payment methods are readable"</span></li>
+    </ul>
+    <div class="grid" style="margin-top: 28px;">
+      <div class="card money"><h3>Privacy by construction</h3><p>Photos are judged in memory and discarded. Only the hash goes on chain. Precise location is read only while a mission screen is open.</p></div>
+      <div class="card money"><h3>Keys stay in the wallet</h3><p>Sign-in, funding and staking go through Mobile Wallet Adapter. The verifier key can only pay a reserved worker from that mission's vault.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="s11">
+  <div class="kicker">Business model</div>
+  <h2>A marketplace fee, paid at funding time, on chain</h2>
+  <div class="stats">
+    <div class="stat"><b style="color: var(--accent)">10%</b><span>platform fee on funded rewards</span></div>
+    <div class="stat"><b style="color: var(--seeker)">5%</b><span>for creators staking 500 SKR</span></div>
+    <div class="stat"><b style="color: var(--money)">$0</b><span>for workers: reservations and payouts are gasless</span></div>
+  </div>
+  <p class="muted" style="margin-top: 18px; font-style: italic;">Worker reward $5 · creator pays $5.50 · Legwork treasury receives $0.50, in the same transaction that funds the escrow.</p>
+  <div class="grid g4">
+    <div class="card"><span class="emoji">🏪</span><h3>Commerce intelligence</h3><p>Payment methods, shelf checks, price and opening-hour verification for directories and brands.</p></div>
+    <div class="card"><span class="emoji">🔌</span><h3>Infrastructure</h3><p>Chargers, kiosks, signage and accessibility checks for operators and cities.</p></div>
+    <div class="card"><span class="emoji">🎪</span><h3>Events</h3><p>Poster presence, booth check-ins, conference scavenger missions.</p></div>
+    <div class="card"><span class="emoji">◎</span><h3>Solana ecosystem</h3><p>"Pay with USDC here" merchant maps, Seeker-only campaigns, community verification drives.</p></div>
+  </div>
+</section>
+
+<section class="slide dark" id="s12">
+  <div class="split">
+    <div>
+      <div class="kicker">What is built</div>
+      <h2 style="color:#fff">Built and running on devnet</h2>
+      <div class="stats">
+        <div class="stat"><b style="color: var(--accent)">9</b><span>program instructions</span></div>
+        <div class="stat"><b style="color: var(--accent)">7</b><span>on-chain account types</span></div>
+        <div class="stat"><b style="color: var(--money)">14</b><span>app screens</span></div>
+        <div class="stat"><b style="color: var(--money)">7</b><span>named proof checks</span></div>
+      </div>
+      <p class="lead muted">Android: Kotlin, Jetpack Compose, Mobile Wallet Adapter 2.0 (Sign-in-with-Solana, signTransactions), MapLibre, CameraX, WorkManager.<br>Program: Anchor 1.0, committed IDL. Verifier: FastAPI, stateless, Gemini vision judge with structured verdicts, dhash duplicate detection, SIWS sessions.</p>
+      <a class="btn" href="https://github.com/Marc-Dvci/Legwork">github.com/Marc-Dvci/Legwork</a><a class="btn ghost" href="deck/Legwork-pitch.pdf">Deck as PDF</a>
+      <h3 style="margin-top: 36px; font-size: 26px; color: #fff;">Legwork. Get paid for the legwork.</h3>
+    </div>
+    <div class="phones"><div class="phone lg"><img src="screenshots/05_paid.png" alt=""></div></div>
+  </div>
+  <div class="foot"><span>Marc Donovici · CLOCK IN 2026</span><span>MIT licence</span></div>
+</section>
+
+<script>
+  const slides = [...document.querySelectorAll('section.slide')];
+  const nav = document.getElementById('nav');
+  slides.forEach((s, i) => { const a = document.createElement('a'); a.href = '#' + s.id; a.title = 'Slide ' + (i + 1); nav.appendChild(a); });
+  const dots = [...nav.children];
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { const i = slides.indexOf(e.target); dots.forEach((d, j) => d.classList.toggle('on', j === i)); document.body.classList.toggle('on-dark', e.target.classList.contains('dark')); } }), { threshold: 0.6 });
+  slides.forEach(s => io.observe(s));
+  document.addEventListener('keydown', e => {
+    const cur = dots.findIndex(d => d.classList.contains('on'));
+    if (['ArrowDown', 'ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); slides[Math.min(cur + 1, slides.length - 1)].scrollIntoView(); }
+    if (['ArrowUp', 'ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); slides[Math.max(cur - 1, 0)].scrollIntoView(); }
+  });
+</script>
+</body>
+</html>

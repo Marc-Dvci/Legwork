@@ -66,7 +66,7 @@ function stat(s, x, y, w, big, label, color = C.ink) {
     x: 0.9, y: 3.95, w: 7.2, h: 1.1, fontFace: FONT, fontSize: 16, color: "CFC7BC", isTextBox: true, margin: 0,
   });
   s.addText("CLOCK IN · Solana Mobile hackathon · October 2026", { x: 0.9, y: 5.6, w: 8, h: 0.4, fontFace: FONT, fontSize: 13, color: "8F877D", isTextBox: true, margin: 0 });
-  s.addText("Marc Donovici · github.com/Marc-Dvci/legwork", { x: 0.9, y: 6.0, w: 8, h: 0.4, fontFace: FONT, fontSize: 13, color: "8F877D", isTextBox: true, margin: 0 });
+  s.addText("Marc Donovici · github.com/Marc-Dvci/Legwork", { x: 0.9, y: 6.0, w: 8, h: 0.4, fontFace: FONT, fontSize: 13, color: "8F877D", isTextBox: true, margin: 0 });
   phone(s, "01_map.png", 9.6, 0.6, 6.3);
 }
 
@@ -284,7 +284,7 @@ function stat(s, x, y, w, big, label, color = C.ink) {
     "Repository someone else can clone and run: pinned Docker build for the program, local validator script, devnet seeding, unit tests",
   ];
   lines.forEach((t, i) => s.addText("·  " + t, { x: 0.8, y: 3.5 + i * 0.5, w: 8.4, h: 0.5, fontFace: FONT, fontSize: 12.5, color: "E8E1D8", isTextBox: true, margin: 0 }));
-  s.addText("github.com/Marc-Dvci/legwork", { x: 0.8, y: 5.8, w: 8, h: 0.4, fontFace: FONT, fontSize: 16, bold: true, color: C.accent, isTextBox: true, margin: 0 });
+  s.addText("github.com/Marc-Dvci/Legwork", { x: 0.8, y: 5.8, w: 8, h: 0.4, fontFace: FONT, fontSize: 16, bold: true, color: C.accent, isTextBox: true, margin: 0 });
   s.addText("Legwork. Get paid for the legwork.", { x: 0.8, y: 6.3, w: 8, h: 0.5, fontFace: HEAD, fontSize: 20, color: "FFFFFF", isTextBox: true, margin: 0 });
   phone(s, "05_paid.png", 10.0, 0.7, 6.1);
   footer(s, true);
