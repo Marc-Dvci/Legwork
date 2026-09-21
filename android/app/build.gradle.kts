@@ -1,8 +1,17 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     id("org.jetbrains.kotlin.plugin.serialization")
+}
+
+// Release signing: a keystore.properties outside the repo (see README); falls back to the debug key.
+val keystoreProps = Properties().apply {
+    val f = rootProject.file("../../keys/keystore.properties")
+    if (f.exists()) FileInputStream(f).use { load(it) }
 }
 
 android {
@@ -20,10 +29,22 @@ android {
         buildConfigField("String", "VERIFIER_URL", "\"${project.findProperty("verifierUrl") ?: "https://legwork-verifier.onrender.com"}\"")
     }
 
+    signingConfigs {
+        if (keystoreProps.containsKey("storeFile")) {
+            create("release") {
+                storeFile = rootProject.file(keystoreProps["storeFile"] as String)
+                storePassword = keystoreProps["storePassword"] as String
+                keyAlias = keystoreProps["keyAlias"] as String
+                keyPassword = keystoreProps["keyPassword"] as String
+            }
+        }
+    }
     buildTypes {
         release {
-            isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = if (keystoreProps.containsKey("storeFile")) signingConfigs.getByName("release") else signingConfigs.getByName("debug")
         }
     }
     compileOptions {

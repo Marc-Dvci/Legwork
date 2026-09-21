@@ -207,7 +207,7 @@ private class MapHolder {
         if (target != null && fix != null && (first || !centered)) {
             val d = app.legwork.core.Geo.distanceM(fix.lat, fix.lon, target.lat, target.lon)
             val mid = LatLng((fix.lat + target.lat) / 2, (fix.lon + target.lon) / 2)
-            val zoom = (17.0 - ln(d.coerceAtLeast(60.0) / 140.0) / ln(2.0)).coerceIn(11.0, 17.0)
+            val zoom = (17.0 - ln(d.coerceAtLeast(60.0) / 100.0) / ln(2.0)).coerceIn(11.0, 17.0)
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(mid, zoom))
             centered = true
         } else if (target != null && (first || !centered)) {
@@ -217,7 +217,9 @@ private class MapHolder {
         } else if (!centered && missions.isNotEmpty()) {
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(missions[0].lat, missions[0].lon), 13.5)); centered = true
         } else if (follow && fix != null) {
-            map.easeCamera(CameraUpdateFactory.newLatLng(LatLng(fix.lat, fix.lon)), 500)
+            // Keep both the walker and the pin in frame while the distance closes.
+            val c = if (target != null) LatLng((fix.lat + target.lat) / 2, (fix.lon + target.lon) / 2) else LatLng(fix.lat, fix.lon)
+            map.easeCamera(CameraUpdateFactory.newLatLng(c), 500)
         }
     }
 }
