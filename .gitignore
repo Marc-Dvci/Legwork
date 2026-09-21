@@ -1,0 +1,37 @@
+# Android
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+android/*.iml
+android/app/*.iml
+android/captures/
+*.apk
+!release/*.apk
+*.aab
+.cxx/
+
+# Anchor / Rust
+program/target/
+program/.anchor/
+program/node_modules/
+program/test-ledger/
+program/**/*-keypair.json
+
+# Python
+verifier/.venv/
+verifier/__pycache__/
+**/__pycache__/
+*.pyc
+verifier/.env
+
+# Secrets
+keys/
+*.pem
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db

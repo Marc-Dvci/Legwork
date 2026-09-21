@@ -1,0 +1,11 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- A boot print: the mark for legwork -->
+    <group android:translateX="54" android:translateY="54" android:rotation="-18">
+        <path android:fillColor="#FFFFFFFF"
+            android:pathData="M-13,-26 C-13,-34 -4,-38 3,-34 C10,-30 12,-20 9,-10 L6,4 C4,10 -2,12 -8,10 C-14,8 -16,2 -14,-6 Z" />
+        <path android:fillColor="#FFFFFFFF"
+            android:pathData="M-9,16 C-9,12 -4,10 2,11 C8,12 10,17 8,22 L6,28 C4,32 -2,33 -7,31 C-11,29 -11,23 -9,16 Z" />
+    </group>
+</vector>
