@@ -145,14 +145,31 @@ def vision_judge(m: Mission, img: Image.Image) -> dict:
     resp = client.models.generate_content(
         model=settings.gemini_model,
         contents=[types.Part.from_bytes(data=buf.getvalue(), mime_type="image/jpeg"), prompt],
-        config=types.GenerateContentConfig(response_mime_type="application/json", temperature=0.1),
+        config=types.GenerateContentConfig(
+            response_mime_type="application/json", temperature=0.1, max_output_tokens=2048,
+            thinking_config=types.ThinkingConfig(thinking_budget=0),
+        ),
     )
-    text = resp.text or "{}"
+    text = resp.text or ""
+    return parse_verdict(text)
+
+
+def parse_verdict(text: str) -> dict:
+    """Tolerates fenced JSON, trailing prose and the schema comments the model sometimes echoes."""
+    import re
+    body = text.strip()
+    if body.startswith("```"):
+        body = re.sub(r"^```(?:json)?\s*|\s*```$", "", body)
+    start, end = body.find("{"), body.rfind("}")
+    if start < 0 or end < 0:
+        raise ValueError(f"no JSON object in judge response: {text[:200]!r}")
+    body = body[start:end + 1]
     try:
-        return json.loads(text)
+        return json.loads(body)
     except json.JSONDecodeError:
-        start, end = text.find("{"), text.rfind("}")
-        return json.loads(text[start:end + 1])
+        body = re.sub(r"//[^\n\"]*", "", body)  # schema-style comments
+        body = re.sub(r",\s*([}\]])", r"\1", body)  # trailing commas
+        return json.loads(body)
 
 
 def verify(m: Mission, photo: bytes, lat: float, lon: float, accuracy: float, timestamp: int, mock: bool,
@@ -182,7 +199,9 @@ def verify(m: Mission, photo: bytes, lat: float, lon: float, accuracy: float, ti
 
     try:
         j = vision_judge(m, img)
-    except Exception as e:  # transport or quota
+    except Exception as e:  # transport, quota or an unparseable verdict
+        import logging
+        logging.getLogger("legwork").warning("vision judge failed: %s: %s", type(e).__name__, str(e)[:300])
         v.checks.append(Check("Photo matches the mission", False, f"verifier unavailable: {type(e).__name__}"))
         v.reason = "The vision verifier is temporarily unavailable. Try again in a moment."
         return v

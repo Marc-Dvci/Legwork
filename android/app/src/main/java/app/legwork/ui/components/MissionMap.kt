@@ -105,6 +105,7 @@ private class MapHolder {
     private var map: MapLibreMap? = null
     private var style: Style? = null
     private var centered = false
+    private var centeredOn: LatLng? = null
 
     private var lastTarget: Mission? = null
 
@@ -214,6 +215,13 @@ private class MapHolder {
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(target.lat, target.lon), 16.0)); centered = true
         } else if (!centered && fix != null) {
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(fix.lat, fix.lon), 14.5)); centered = true
+            centeredOn = LatLng(fix.lat, fix.lon)
+        } else if (target == null && !follow && fix != null && (centeredOn == null ||
+                app.legwork.core.Geo.distanceM(centeredOn!!.latitude, centeredOn!!.longitude, fix.lat, fix.lon) > 3_000)
+        ) {
+            // First real fix, or the phone moved to another area: centre on the walker.
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(fix.lat, fix.lon), 14.5))
+            centeredOn = LatLng(fix.lat, fix.lon)
         } else if (!centered && missions.isNotEmpty()) {
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(missions[0].lat, missions[0].lon), 13.5)); centered = true
         } else if (follow && fix != null) {

@@ -163,7 +163,7 @@ function stat(s, x, y, w, big, label, color = C.ink) {
   left.forEach(([h, b], i) => card(s, 0.7, 2.1 + i * 1.15, 6.4, 1.07, h, b));
   const right = [
     ["Escrow you can inspect", "\"$12.00 still locked\" on the mission page is the vault balance."],
-    ["Instant global settlement", "A worker in Strasbourg is paid by a creator anywhere, in seconds, with a transaction link."],
+    ["Instant global settlement", "A worker in Paris is paid by a creator anywhere, in seconds, with a transaction link."],
     ["Permissionless reads", "Leaderboards and creator analytics are getProgramAccounts calls."],
     ["Verifier is a key, not a database", "It can only pay a reserved worker from that mission's vault, once."],
   ];

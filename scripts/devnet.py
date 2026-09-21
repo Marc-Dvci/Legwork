@@ -5,7 +5,7 @@ Usage (from the repo root, with the verifier venv):
   python scripts/devnet.py init          # one-time: Config account + SKR vault (authority pays)
   python scripts/devnet.py mint skr      # create the devnet test SKR mint (6 decimals); `mint usdc` on localnet
   python scripts/devnet.py fund skr <wallet> <amount>
-  python scripts/devnet.py seed --lat 48.5831 --lon 7.7451   # demo missions around a point
+  python scripts/devnet.py seed --lat 48.8590 --lon 2.3480   # demo missions around a point
   python scripts/devnet.py close-all     # creator closes its open missions and takes the escrow back
 
 Keys are read from ../keys (LEGWORK_KEYS overrides): authority.json, verifier.json, demo-creator.json.

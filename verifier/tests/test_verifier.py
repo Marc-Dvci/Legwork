@@ -24,7 +24,7 @@ from program import ACC_DISC, Builder, CreateMissionArgs, Mission, Pdas, WorkerP
 def make_mission(**over) -> Mission:
     base = dict(
         address=Pubkey.new_unique(), id=3, creator=Pubkey.new_unique(), vault=Pubkey.new_unique(), reward=4_000_000,
-        slots=5, filled=1, lat_e6=48_583_000, lon_e6=7_745_000, radius_m=75, deadline=int(time.time()) + 86_400,
+        slots=5, filled=1, lat_e6=48_859_000, lon_e6=2_348_000, radius_m=75, deadline=int(time.time()) + 86_400,
         requires_seeker=False, min_score=0, category=5, proof_kind=0, status=0, created_at=0, fee_paid=0,
         title="Verify USDC acceptance", instructions="Photograph the payment sign", question="Accepts USDC?", bump=254,
     )
@@ -38,7 +38,7 @@ def test_idl_discriminators_loaded():
 
 
 def test_create_mission_args_roundtrip_through_decoder():
-    args = CreateMissionArgs(4_000_000, 5, 48_583_000, 7_745_000, 75, 1_800_000_000, True, 20, 5, 0, "T", "Do this", "Q?")
+    args = CreateMissionArgs(4_000_000, 5, 48_859_000, 2_348_000, 75, 1_800_000_000, True, 20, 5, 0, "T", "Do this", "Q?")
     encoded = args.encode()
     # Mission account = disc + id + creator + vault + (args fields in the same order as the struct) ...
     # Build a synthetic Mission account body to check the decoder layout matches the program struct.
@@ -51,7 +51,7 @@ def test_create_mission_args_roundtrip_through_decoder():
         + b"\xfe"
     )
     m = Mission.decode(Pubkey.new_unique(), ACC_DISC["Mission"] + body)
-    assert (m.reward, m.slots, m.lat_e6, m.lon_e6, m.radius_m, m.deadline) == (4_000_000, 5, 48_583_000, 7_745_000, 75, 1_800_000_000)
+    assert (m.reward, m.slots, m.lat_e6, m.lon_e6, m.radius_m, m.deadline) == (4_000_000, 5, 48_859_000, 2_348_000, 75, 1_800_000_000)
     assert m.requires_seeker is True and m.min_score == 20 and m.category == 5
     assert (m.title, m.instructions, m.question, m.bump) == ("T", "Do this", "Q?", 254)
 
@@ -91,13 +91,13 @@ def test_worker_profile_decode():
 def test_location_policy():
     m = make_mission()
     now = time.time()
-    ok = verify.location_checks(m, 48.5831, 7.7451, 12.0, int(now), False, now)
+    ok = verify.location_checks(m, 48.8590, 2.3480, 12.0, int(now), False, now)
     assert all(c.passed for c in ok)
-    far = verify.location_checks(m, 48.59, 7.75, 12.0, int(now), False, now)
+    far = verify.location_checks(m, 48.87, 2.36, 12.0, int(now), False, now)
     assert not far[0].passed
-    stale = verify.location_checks(m, 48.5831, 7.7451, 12.0, int(now) - 3600, False, now)
+    stale = verify.location_checks(m, 48.8590, 2.3480, 12.0, int(now) - 3600, False, now)
     assert not stale[2].passed
-    mocked = verify.location_checks(m, 48.5831, 7.7451, 12.0, int(now), True, now)
+    mocked = verify.location_checks(m, 48.8590, 2.3480, 12.0, int(now), True, now)
     assert not mocked[3].passed
 
 
@@ -111,12 +111,12 @@ def test_verify_rejects_bad_image_and_exact_duplicate(monkeypatch):
     monkeypatch.setattr(verify.settings, "skip_vision", True)
     m = make_mission()
     now = int(time.time())
-    v = verify.verify(m, b"not an image", 48.5831, 7.7451, 10, now, False, set(), [])
+    v = verify.verify(m, b"not an image", 48.8590, 2.3480, 10, now, False, set(), [])
     assert not v.approved and "readable" in v.reason
     photo = _jpeg((200, 30, 30))
-    v1 = verify.verify(m, photo, 48.5831, 7.7451, 10, now, False, set(), [])
+    v1 = verify.verify(m, photo, 48.8590, 2.3480, 10, now, False, set(), [])
     assert v1.approved and len(v1.proof_hash) == 32
-    v2 = verify.verify(m, photo, 48.5831, 7.7451, 10, now, False, {v1.proof_hash}, [])
+    v2 = verify.verify(m, photo, 48.8590, 2.3480, 10, now, False, {v1.proof_hash}, [])
     assert not v2.approved and "already submitted" in v2.reason
 
 
@@ -147,3 +147,10 @@ def test_siws_roundtrip():
     assert auth.read_token("s", token) == wallet
     with pytest.raises(auth.AuthError):
         auth.read_token("other", token)
+
+
+def test_parse_verdict_tolerates_comments_and_fences():
+    raw = '```json\n{"relevant": true, // the photo shows it\n "confidence": 90, "requirements": [],}\n```'
+    j = verify.parse_verdict(raw)
+    assert j["relevant"] is True and j["confidence"] == 90
+    assert verify.parse_verdict('{"a": 1}')["a"] == 1

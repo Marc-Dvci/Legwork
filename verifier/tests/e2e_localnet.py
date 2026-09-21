@@ -61,7 +61,7 @@ def main():
     c.headers["Authorization"] = f"Bearer {token}"
     print("signed in as", kp.pubkey())
 
-    ms = c.get("/missions", params={"lat": 48.5831, "lon": 7.7451, "wallet": str(kp.pubkey())}).json()
+    ms = c.get("/missions", params={"lat": 48.8590, "lon": 2.3480, "wallet": str(kp.pubkey())}).json()
     print(f"{len(ms)} missions; nearest {ms[0]['title']!r} at {ms[0]['distanceM']:.0f} m")
     open_ms = [x for x in ms if not x["completedByMe"] and not x["requiresSeeker"]]
     m = next(x for x in open_ms if a.title.lower() in x["title"].lower()) if a.title else open_ms[a.mission_index]

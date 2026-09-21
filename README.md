@@ -159,7 +159,7 @@ scripts/anchor.sh "anchor deploy --provider.cluster devnet"
 python scripts/devnet.py status
 python scripts/devnet.py mint skr                      # devnet test SKR
 python scripts/devnet.py init                          # Config + stake vault
-python scripts/devnet.py seed --lat 48.5831 --lon 7.7451 --seeker-only-last
+python scripts/devnet.py seed --lat 48.8590 --lon 2.3480 --seeker-only-last
 ```
 
 `scripts/localnet.sh` runs `solana-test-validator` with the program preloaded for a fully local loop (`python scripts/devnet.py mint usdc` creates a local USDC stand-in).

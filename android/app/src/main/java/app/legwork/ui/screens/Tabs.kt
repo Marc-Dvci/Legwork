@@ -194,7 +194,7 @@ fun ProfileTab(vm: AppViewModel, sender: ActivityResultSender, nav: NavHostContr
     LaunchedEffect(state.wallet) { if (state.wallet != null) vm.refreshWorker() }
 
     Column(Modifier.fillMaxSize()) {
-        ScreenHeader("Profile", state.session.walletLabel ?: Format.shortKey(state.wallet)) {
+        ScreenHeader("Profile", Format.shortKey(state.wallet)) {
             IconButton(onClick = { nav.navigate(Routes.SETTINGS) }) { Icon(Icons.Outlined.Settings, "Settings", tint = Legwork.Muted) }
         }
         if (state.wallet == null) { ConnectPrompt(vm, sender, "Your reputation is an account on Solana. Connect to see it."); return }
