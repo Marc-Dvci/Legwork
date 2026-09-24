@@ -206,7 +206,7 @@ async def submit(
             raise HTTPException(502, f"Payout failed on chain: {e}")
         board.invalidate()
         out.update({"signature": sig, "amount": m.reward})
-    else:
+    elif not verdict.judge_unavailable:
         try:
             rpc.send_and_confirm(verifier, [b.record_rejection(verifier.pubkey(), worker)])
         except RpcError:

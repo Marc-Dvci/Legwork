@@ -35,6 +35,7 @@ class Verdict:
     answer_text: str = ""
     reason: str = ""
     proof_hash: bytes = b""
+    judge_unavailable: bool = False  # nothing was judged: no reputation change, the worker may resubmit
 
     def to_json(self) -> dict:
         return {
@@ -201,9 +202,6 @@ def verify(m: Mission, photo: bytes, lat: float, lon: float, accuracy: float, ti
         h = dhash(img)
         dup = any(hamming(h, other) <= 6 for other in recent_dhashes)
         v.checks.append(Check("Original photo", not dup, "near-duplicate of a recent submission" if dup else "not seen before"))
-        if not dup:
-            recent_dhashes.append(h)
-            del recent_dhashes[:-2000]
     if not all(c.passed for c in v.checks) or img is None:
         v.reason = next((c.detail for c in v.checks if not c.passed), "Checks failed")
         return v
@@ -211,6 +209,7 @@ def verify(m: Mission, photo: bytes, lat: float, lon: float, accuracy: float, ti
     if settings.skip_vision:
         v.checks.append(Check("Photo matches the mission", True, "vision check skipped in test mode"))
         v.confidence, v.answer, v.answer_text, v.approved = 90, 0, "", True
+        recent_dhashes.append(h)
         return v
 
     try:
@@ -218,9 +217,13 @@ def verify(m: Mission, photo: bytes, lat: float, lon: float, accuracy: float, ti
     except Exception as e:  # transport, quota or an unparseable verdict
         import logging
         logging.getLogger("legwork").warning("vision judge failed: %s: %s", type(e).__name__, str(e)[:300])
-        v.checks.append(Check("Photo matches the mission", False, f"verifier unavailable: {type(e).__name__}"))
+        v.checks.append(Check("Photo matches the mission", False, f"verifier unavailable: {type(e).__name__} {getattr(e, 'code', '')}".strip()))
         v.reason = "The vision verifier is temporarily unavailable. Try again in a moment."
+        v.judge_unavailable = True
         return v
+
+    recent_dhashes.append(h)
+    del recent_dhashes[:-2000]
 
     for req in (j.get("requirements") or [])[:4]:
         v.checks.append(Check(str(req.get("name", "Requirement"))[:60], bool(req.get("pass")), str(req.get("detail", ""))[:120]))
