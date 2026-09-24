@@ -112,7 +112,7 @@ pytest tests            # unit tests: encoders vs IDL, PDAs, GPS policy, duplica
 
 ### Deploy
 
-The live verifier runs on Vercel's Hobby plan at https://legwork-verifier.vercel.app (FastAPI, zero config). Import the repository in Vercel with root directory `verifier`, then set `VERIFIER_KEYPAIR` (JSON array), `GEMINI_API_KEY`, `JWT_SECRET` and the public values from `verifier/.env.example`. `verifier/Dockerfile` runs the same service on any container host.
+The live verifier runs on Vercel's Hobby plan at https://legwork-verifier.vercel.app (FastAPI, zero config). Import the repository in Vercel (`vercel.json` routes every path to `api/index.py`, which serves `verifier/`), then set `VERIFIER_KEYPAIR` (JSON array), `GEMINI_API_KEY`, `JWT_SECRET` and the public values from `verifier/.env.example`. `verifier/Dockerfile` runs the same service on any container host.
 
 ## Android app
 
@@ -169,7 +169,7 @@ python scripts/devnet.py seed --lat 48.8590 --lon 2.3480 --seeker-only-last
 ```
 android/     Kotlin + Compose app
 program/     Anchor workspace, committed IDL in program/idl
-verifier/    FastAPI oracle, tests, Dockerfile
+verifier/    FastAPI oracle, tests, Dockerfile (api/index.py + vercel.json host it on Vercel)
 scripts/     anchor.sh, localnet.sh, devnet.py, build_apk.sh
 docs/        pitch deck, demo script, screenshots
 ```

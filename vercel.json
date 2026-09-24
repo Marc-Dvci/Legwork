@@ -1,0 +1,6 @@
+{
+  "functions": {
+    "api/index.py": { "includeFiles": "verifier/*.{py,json}", "maxDuration": 120 }
+  },
+  "rewrites": [{ "source": "/(.*)", "destination": "/api/index" }]
+}
