@@ -108,11 +108,11 @@ uvicorn app:app --port 8000
 pytest tests            # unit tests: encoders vs IDL, PDAs, GPS policy, duplicates, SIWS
 ```
 
-`GEMINI_API_KEY` is a Google AI Studio key. `VERTEX_PROJECT` with application default credentials works too. `SKIP_VISION=1` approves on the GPS policy alone for local runs.
+`GEMINI_API_KEY` is a Google AI Studio key. `VERTEX_PROJECT` with application default credentials works too and is tried first when set. `GEMINI_MODEL` is a comma-separated chain: the judge moves to the next model when one is overloaded or out of quota. `SKIP_VISION=1` approves on the GPS policy alone for local runs.
 
 ### Deploy
 
-`render.yaml` describes a free Render web service built from `verifier/Dockerfile`. Set `VERIFIER_KEYPAIR` (JSON array) and `GEMINI_API_KEY` in the dashboard; `JWT_SECRET` is generated.
+The live verifier runs on Vercel's Hobby plan at https://legwork-verifier.vercel.app (FastAPI, zero config). Import the repository in Vercel with root directory `verifier`, then set `VERIFIER_KEYPAIR` (JSON array), `GEMINI_API_KEY`, `JWT_SECRET` and the public values from `verifier/.env.example`. `verifier/Dockerfile` runs the same service on any container host.
 
 ## Android app
 
@@ -172,7 +172,6 @@ program/     Anchor workspace, committed IDL in program/idl
 verifier/    FastAPI oracle, tests, Dockerfile
 scripts/     anchor.sh, localnet.sh, devnet.py, build_apk.sh
 docs/        pitch deck, demo script, screenshots
-render.yaml  one-click verifier deployment
 ```
 
 ## Security notes

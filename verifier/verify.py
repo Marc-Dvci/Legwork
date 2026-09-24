@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import io
 import json
+import logging
 import math
 import time
 from dataclasses import dataclass, field
@@ -124,13 +125,17 @@ Answer ONLY with JSON matching this schema:
 }}"""
 
 
-def _client():
+def _clients() -> list:
+    """Vertex first when configured (paid, no daily cap), then the AI Studio key."""
     from google import genai
-    if settings.gemini_api_key:
-        return genai.Client(api_key=settings.gemini_api_key, http_options={"timeout": 45_000})
+    clients = []
     if settings.vertex_project:
-        return genai.Client(vertexai=True, project=settings.vertex_project, location=settings.vertex_location, http_options={"timeout": 45_000})
-    raise RuntimeError("No GEMINI_API_KEY or VERTEX_PROJECT configured")
+        clients.append(genai.Client(vertexai=True, project=settings.vertex_project, location=settings.vertex_location, http_options={"timeout": 45_000}))
+    if settings.gemini_api_key:
+        clients.append(genai.Client(api_key=settings.gemini_api_key, http_options={"timeout": 45_000}))
+    if not clients:
+        raise RuntimeError("No GEMINI_API_KEY or VERTEX_PROJECT configured")
+    return clients
 
 
 def vision_judge(m: Mission, img: Image.Image) -> dict:
@@ -141,17 +146,28 @@ def vision_judge(m: Mission, img: Image.Image) -> dict:
     img2.thumbnail((1024, 1024))
     img2.save(buf, format="JPEG", quality=85)
     prompt = JUDGE_PROMPT.format(title=m.title, instructions=m.instructions, question=m.question or "(none)")
-    client = _client()
-    resp = client.models.generate_content(
-        model=settings.gemini_model,
-        contents=[types.Part.from_bytes(data=buf.getvalue(), mime_type="image/jpeg"), prompt],
-        config=types.GenerateContentConfig(
-            response_mime_type="application/json", temperature=0.1, max_output_tokens=2048,
-            thinking_config=types.ThinkingConfig(thinking_budget=0),
-        ),
-    )
-    text = resp.text or ""
-    return parse_verdict(text)
+    from google.genai import errors
+    models = [s.strip() for s in settings.gemini_model.split(",") if s.strip()]
+    chain = [(c, name) for c in _clients() for name in models]
+    attempts = chain * 2
+    for i, (client, model) in enumerate(attempts):
+        if i == len(chain):
+            time.sleep(3)
+        try:
+            resp = client.models.generate_content(
+                model=model,
+                contents=[types.Part.from_bytes(data=buf.getvalue(), mime_type="image/jpeg"), prompt],
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json", temperature=0.1, max_output_tokens=2048,
+                    thinking_config=types.ThinkingConfig(thinking_budget=0),
+                ),
+            )
+        except errors.APIError as e:  # overloaded, out of daily quota, or a config this model rejects
+            if i + 1 < len(attempts):
+                logging.getLogger("legwork").info("judge %s failed with %s, trying the next model", model, e.code)
+                continue
+            raise
+        return parse_verdict(resp.text or "")
 
 
 def parse_verdict(text: str) -> dict:

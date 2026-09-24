@@ -31,6 +31,7 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 
 PROGRAM_ID = Pubkey.from_string(settings.program_id)
 rpc = Rpc(settings.rpc_url)
+sgt_rpc = Rpc(settings.sgt_rpc_url)
 board = Board(rpc, PROGRAM_ID)
 pdas = Pdas(PROGRAM_ID)
 _recent_dhashes: list[int] = []
@@ -117,14 +118,14 @@ def missions(lat: float | None = None, lon: float | None = None, radius_km: floa
         if m.status == 2:
             continue
         d = haversine_m(lat, lon, m.lat, m.lon) if lat is not None and lon is not None else None
-        if d is not None and d > radius_km * 1000:
-            continue
         if m.deadline < now - 86_400 and m.address not in done:
             continue
         name, verified = creator_meta(m.creator)
         out.append(m.to_json(d, name, verified, m.address in done))
     out.sort(key=lambda x: (x["distanceM"] is None, x["distanceM"] or 0))
-    return out
+    nearby = [x for x in out if x["distanceM"] is None or x["distanceM"] <= radius_km * 1000]
+    # A new area is never an empty board: with nothing in range, show the nearest open missions.
+    return nearby or out[:20]
 
 
 @app.get("/missions/{address}")
@@ -234,7 +235,7 @@ def worker_completions(wallet: str):
 
 @app.post("/workers/verify-seeker")
 def verify_seeker(worker: Pubkey = Depends(current_wallet)):
-    mint = rpc.find_seeker_genesis_token(worker)
+    mint = sgt_rpc.find_seeker_genesis_token(worker)
     if not mint:
         return {"verified": False, "reason": "No Seeker Genesis Token found in this wallet"}
     verifier = settings.require_verifier()

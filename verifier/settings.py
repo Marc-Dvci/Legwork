@@ -29,6 +29,8 @@ class Settings:
     rpc_url: str = os.environ.get("RPC_URL", "https://api.devnet.solana.com")
     # RPC the phones use for their own reads; differs from RPC_URL only when the verifier runs beside a local validator.
     public_rpc_url: str = os.environ.get("PUBLIC_RPC_URL") or os.environ.get("RPC_URL", "https://api.devnet.solana.com")
+    # Seeker Genesis Tokens exist on mainnet only, so the device check reads mainnet whatever the cluster.
+    sgt_rpc_url: str = os.environ.get("SGT_RPC_URL", "https://api.mainnet-beta.solana.com")
     program_id: str = os.environ.get("PROGRAM_ID", "86V9Vw6jPnoy4R6feJK6atwMK3x1oUootvvbqb8iZHD6")
     usdc_mint: str = os.environ.get("USDC_MINT", DEFAULT_USDC_DEVNET)
     skr_mint: str = os.environ.get("SKR_MINT", "")
@@ -36,7 +38,8 @@ class Settings:
     jwt_secret: str = os.environ.get("JWT_SECRET", "")
     identity_domain: str = os.environ.get("IDENTITY_DOMAIN", "legwork.app")
     gemini_api_key: str = os.environ.get("GEMINI_API_KEY", "")
-    gemini_model: str = os.environ.get("GEMINI_MODEL", "gemini-2.5-flash")
+    # Comma-separated: the judge falls through to the next model when one is overloaded or rate-limited.
+    gemini_model: str = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash,gemini-3.5-flash,gemini-3.7-flash,gemini-3.8-flash,gemini-flash-latest")
     vertex_project: str = os.environ.get("VERTEX_PROJECT", "")
     vertex_location: str = os.environ.get("VERTEX_LOCATION", "global")
     explorer_base: str = os.environ.get("EXPLORER_BASE", "https://explorer.solana.com")

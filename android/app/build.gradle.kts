@@ -26,7 +26,7 @@ android {
         versionName = "1.0.0"
         vectorDrawables.useSupportLibrary = true
         // Default verifier endpoint; override for local testing with -PverifierUrl=http://10.0.2.2:8000
-        buildConfigField("String", "VERIFIER_URL", "\"${project.findProperty("verifierUrl") ?: "https://legwork-verifier.onrender.com"}\"")
+        buildConfigField("String", "VERIFIER_URL", "\"${project.findProperty("verifierUrl") ?: "https://legwork-verifier.vercel.app"}\"")
     }
 
     signingConfigs {
