@@ -139,6 +139,9 @@ def _clients() -> list:
     return clients
 
 
+JUDGE_BUDGET_S = 60
+
+
 def vision_judge(m: Mission, img: Image.Image) -> dict:
     """Asks the vision model for a structured verdict. Raises on transport errors."""
     from google.genai import types
@@ -151,20 +154,25 @@ def vision_judge(m: Mission, img: Image.Image) -> dict:
     models = [s.strip() for s in settings.gemini_model.split(",") if s.strip()]
     chain = [(c, name) for c in _clients() for name in models]
     attempts = chain * 2
+    deadline = time.monotonic() + JUDGE_BUDGET_S  # the app gives up on a submission after 90 s
     for i, (client, model) in enumerate(attempts):
         if i == len(chain):
             time.sleep(3)
+        if model.startswith("gemma"):  # no JSON mode or thinking budget; parse_verdict reads the JSON from text
+            config = types.GenerateContentConfig(temperature=0.1, max_output_tokens=2048)
+        else:
+            config = types.GenerateContentConfig(
+                response_mime_type="application/json", temperature=0.1, max_output_tokens=2048,
+                thinking_config=types.ThinkingConfig(thinking_budget=0),
+            )
         try:
             resp = client.models.generate_content(
                 model=model,
                 contents=[types.Part.from_bytes(data=buf.getvalue(), mime_type="image/jpeg"), prompt],
-                config=types.GenerateContentConfig(
-                    response_mime_type="application/json", temperature=0.1, max_output_tokens=2048,
-                    thinking_config=types.ThinkingConfig(thinking_budget=0),
-                ),
+                config=config,
             )
         except errors.APIError as e:  # overloaded, out of daily quota, or a config this model rejects
-            if i + 1 < len(attempts):
+            if i + 1 < len(attempts) and time.monotonic() < deadline:
                 logging.getLogger("legwork").info("judge %s failed with %s, trying the next model", model, e.code)
                 continue
             raise

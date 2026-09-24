@@ -39,7 +39,8 @@ class Settings:
     identity_domain: str = os.environ.get("IDENTITY_DOMAIN", "legwork.app")
     gemini_api_key: str = os.environ.get("GEMINI_API_KEY", "")
     # Comma-separated: the judge falls through to the next model when one is overloaded or rate-limited.
-    gemini_model: str = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash,gemini-3.5-flash,gemini-3.7-flash,gemini-3.8-flash,gemini-flash-latest")
+    # Gemma runs on the same key with a far larger free quota than Gemini Flash (20 requests per model per day).
+    gemini_model: str = os.environ.get("GEMINI_MODEL", "gemini-3.6-flash,gemini-3.5-flash,gemma-4-26b-a4b-it,gemini-3.7-flash,gemini-3.8-flash,gemini-flash-latest,gemma-4-31b-it")
     vertex_project: str = os.environ.get("VERTEX_PROJECT", "")
     vertex_location: str = os.environ.get("VERTEX_LOCATION", "global")
     explorer_base: str = os.environ.get("EXPLORER_BASE", "https://explorer.solana.com")
